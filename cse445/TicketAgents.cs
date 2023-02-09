@@ -10,13 +10,13 @@ public class TicketAgent {
     private int _budget;
     private MultiCellBuffer _buffer;
     private int PriceCut;
-    private Cruise1 cruise1;
-    
-    public TicketAgent(int id, MultiCellBuffer buffer,int budget, Cruise cruise) {
+    private List<Cruise> cruiseList;
+   
+    public TicketAgent(int id, MultiCellBuffer buffer,int budget, List<Cruise> cruiseList) {
         _id = id;
         _buffer = buffer;
         _budget = budget;
-        this.cruise1 = cruise1;
+        this.cruiseList = cruiseList;
     }
 
     
@@ -29,7 +29,9 @@ public class TicketAgent {
 
     public void Run() {
         // this will listen to the price cut event and then will create a new order object and will put it in the buffer
-
+        foreach(var cruise in cruiseList) {
+            cruise.PriceCut += PriceCutHandler; // this will listen to the price cut event from all three cruise classes
+        };
         
 
     }

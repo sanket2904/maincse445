@@ -12,10 +12,10 @@ public class Cruise {
     private int oldPrice = 0;
     // creating a price change event which will be fired when the price of the ticket is less than the current price
     public delegate void PriceCutEventHandler(int price);
-    public event PriceCutEventHandler PriceCut;
+    public event PriceCutEventHandler? PriceCut;
 
     private int season;
-    protected PricingModel pricingModel;
+    protected PricingModel? pricingModel;
     private MultiCellBuffer _buffer;
     public Cruise(int season, MultiCellBuffer buffer) {
         this.season = season;
