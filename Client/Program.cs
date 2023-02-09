@@ -1,2 +1,6 @@
-﻿// See https://aka.ms/new-console-template for more information
-Console.WriteLine("Hello, World!");
+﻿using cse445;
+string num = Environment.GetCommandLineArgs()[0];  // read the argument from the command line
+
+if (num == "1") {
+    
+}
