@@ -13,33 +13,33 @@ public class OrderProcessing
         _bankService = bankService;
     }
 
-    public void ProcessOrder(int unitPrice, int numberOfTickets, int tax, int locationCharge, string creditCardNumber)
-    {
-        int totalAmount = unitPrice * numberOfTickets + tax + locationCharge;
+    // public void ProcessOrder(OrderClass order)
+    // {
+    //     int totalAmount = order.getUnitPrice() * order.getQuantity() + + locationCharge;
 
-        if (_bankService.verifyCardNumber(creditCardNumber))
-        {
-            int availableFunds = _bankService.getAccountFunds();
-            if (availableFunds >= totalAmount)
-            {
-                // Deduct the total amount from the bank account
-                _bankService.accountFunds -= totalAmount;
+    //     if (_bankService.verifyCardNumber(creditCardNumber))
+    //     {
+    //         int availableFunds = _bankService.getAccountFunds();
+    //         if (availableFunds >= totalAmount)
+    //         {
+    //             // Deduct the total amount from the bank account
+    //             _bankService.accountFunds -= totalAmount;
 
-                // Decrement the available tickets
-                _cruise.availableTickets -= numberOfTickets;
+    //             // Decrement the available tickets
+    //             _cruise.availableTickets -= numberOfTickets;
 
-                Console.WriteLine("Order processed successfully. Total charge: " + totalAmount);
+    //             Console.WriteLine("Order processed successfully. Total charge: " + totalAmount);
 
-                // Send confirmation to the ticket agent (implementation not shown)
-            }
-            else
-            {
-                Console.WriteLine("Order processing failed. Insufficient funds.");
-            }
-        }
-        else
-        {
-            Console.WriteLine("Order processing failed. Invalid credit card number.");
-        }
-    }
+    //             // Send confirmation to the ticket agent (implementation not shown)
+    //         }
+    //         else
+    //         {
+    //             Console.WriteLine("Order processing failed. Insufficient funds.");
+    //         }
+    //     }
+    //     else
+    //     {
+    //         Console.WriteLine("Order processing failed. Invalid credit card number.");
+    //     }
+    // }
 }

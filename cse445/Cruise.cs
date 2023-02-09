@@ -43,8 +43,18 @@ public class Cruise {
     public void Run() {
         // getting the order frrom the buffer and then firing up new thread for each order to process it
         // this method will run the cruise and will fire up a new thread for each order
-        Console.WriteLine("Cruise 1 is running");
+        
+        while (true) {
+            OrderClass order = _buffer.GetOneCell();
+            if (order != null) {
+                var processingOrder = new OrderProcessing(this,);
+                Thread thread = new Thread(new ThreadStart());
+                thread.Start(order);
+            }
+        }
     }
+    // creating a function to process order
+    
 }
 
 
@@ -57,6 +67,7 @@ class Cruise1 : Cruise {
         this.pricingModel = new PricingModel1(season);
     }
 
+    
 
 }
 
