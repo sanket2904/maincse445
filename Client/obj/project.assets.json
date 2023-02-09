@@ -1,11 +1,30 @@
 {
   "version": 3,
   "targets": {
-    "net6.0": {}
+    "net6.0": {
+      "cse445/1.0.0": {
+        "type": "project",
+        "framework": ".NETCoreApp,Version=v6.0",
+        "compile": {
+          "bin/placeholder/cse445.dll": {}
+        },
+        "runtime": {
+          "bin/placeholder/cse445.dll": {}
+        }
+      }
+    }
   },
-  "libraries": {},
+  "libraries": {
+    "cse445/1.0.0": {
+      "type": "project",
+      "path": "../cse445/cse445.csproj",
+      "msbuildProject": "../cse445/cse445.csproj"
+    }
+  },
   "projectFileDependencyGroups": {
-    "net6.0": []
+    "net6.0": [
+      "cse445 >= 1.0.0"
+    ]
   },
   "packageFolders": {
     "C:\\Users\\agarw\\.nuget\\packages\\": {}
@@ -31,7 +50,11 @@
       "frameworks": {
         "net6.0": {
           "targetAlias": "net6.0",
-          "projectReferences": {}
+          "projectReferences": {
+            "D:\\maincse445\\maincse445\\cse445\\cse445.csproj": {
+              "projectPath": "D:\\maincse445\\maincse445\\cse445\\cse445.csproj"
+            }
+          }
         }
       },
       "warningProperties": {

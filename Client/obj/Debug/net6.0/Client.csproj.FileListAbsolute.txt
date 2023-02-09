@@ -1,0 +1,5 @@
+D:\maincse445\maincse445\Client\obj\Debug\net6.0\Client.csproj.AssemblyReference.cache
+D:\maincse445\maincse445\Client\obj\Debug\net6.0\Client.GeneratedMSBuildEditorConfig.editorconfig
+D:\maincse445\maincse445\Client\obj\Debug\net6.0\Client.AssemblyInfoInputs.cache
+D:\maincse445\maincse445\Client\obj\Debug\net6.0\Client.AssemblyInfo.cs
+D:\maincse445\maincse445\Client\obj\Debug\net6.0\Client.csproj.CoreCompileInputs.cache

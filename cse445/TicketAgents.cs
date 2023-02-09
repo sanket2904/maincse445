@@ -2,7 +2,7 @@ namespace cse445;
 
 // making ticket agents 1 through 5 
 
-public class TicketAgent1 {
+public class TicketAgent {
     // Each ticket agent is a thread created by a different object instantiated from the same class
     private int _id;
 
@@ -10,11 +10,16 @@ public class TicketAgent1 {
     private int _budget;
     private MultiCellBuffer _buffer;
     private int PriceCut;
+    private Cruise1 cruise1;
     
-    public TicketAgent1(int id, MultiCellBuffer buffer) {
+    public TicketAgent(int id, MultiCellBuffer buffer,int budget, Cruise cruise) {
         _id = id;
         _buffer = buffer;
+        _budget = budget;
+        this.cruise1 = cruise1;
     }
+
+    
 
     public void Start() {
         // this method will start the thread for the ticket agent
@@ -25,8 +30,8 @@ public class TicketAgent1 {
     public void Run() {
         // this will listen to the price cut event and then will create a new order object and will put it in the buffer
 
-        var Cruise1 = new Cruise1(1);
-        Cruise1.PriceCut += PriceCutHandler;       
+        
+
     }
 
     public void PriceCutHandler(int price) {
@@ -37,3 +42,8 @@ public class TicketAgent1 {
     }
     
 }
+// creating all the ticket agents
+
+
+// ticket agent 4
+

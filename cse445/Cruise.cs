@@ -4,10 +4,10 @@ namespace cse445;
 // creating 3 cruise classes along with each one firing a thread to run the cruise
 
 
-public class Cruise1 {
+public class Cruise {
     // this class uses the pricing model to determine the price of the cruise tickets and each cruise class will have different pricing model
     private int t = 0;
-    private int availableTickets = 10000;
+    public int availableTickets = 10000;
     private int currentPrice;
     private int oldPrice = 0;
     // creating a price change event which will be fired when the price of the ticket is less than the current price
@@ -15,12 +15,14 @@ public class Cruise1 {
     public event PriceCutEventHandler PriceCut;
 
     private int season;
-    private PricingModel1 pricingModel;
+    protected PricingModel pricingModel;
     private MultiCellBuffer _buffer;
-    public Cruise1(int season, MultiCellBuffer buffer) {
+    public Cruise(int season, MultiCellBuffer buffer) {
         this.season = season;
         _buffer = buffer;
     }
+
+    
 
     public void Start() {
         // this method will start the thread for the cruise
@@ -40,19 +42,39 @@ public class Cruise1 {
     }
     public void Run() {
         // getting the order frrom the buffer and then firing up new thread for each order to process it
-        while (true) {
-            // much work to do 
-            OrderClass order = _buffer.GetOneCell();
-            Thread thread = new Thread(new ThreadStart(() => ProcessOrder(order)));
-            thread.Start();
-        }
+        // this method will run the cruise and will fire up a new thread for each order
+        Console.WriteLine("Cruise 1 is running");
     }
 }
 
 
 
-// curise 2 class
+// curise1 class extends the cruise class and will have a different pricing model
 
+
+class Cruise1 : Cruise {
+    public Cruise1(int season, MultiCellBuffer buffer) : base(season, buffer) {
+        this.pricingModel = new PricingModel1(season);
+    }
+
+
+}
+
+// cruise2 class extends the cruise class and will have a different pricing model
+
+class Cruise2 : Cruise {
+    public Cruise2(int season, MultiCellBuffer buffer) : base(season, buffer) {
+        this.pricingModel = new PricingModel2(season);
+    }
+}
+
+// cruise3 class extends the cruise class and will have a different pricing model
+
+class Cruise3 : Cruise {
+    public Cruise3(int season, MultiCellBuffer buffer) : base(season, buffer) {
+        this.pricingModel = new PricingModel3(season);
+    }
+}
 
 
 // creating a OrderProcessing class which will process the order and fire up a new thread, it will then check the validity of the credit card number and will calculate the price of the tickets and will then send the order to the client

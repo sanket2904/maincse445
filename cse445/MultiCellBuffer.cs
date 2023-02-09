@@ -49,4 +49,6 @@ public class MultiCellBuffer {
         _semaphore.Release();
         return order;
     }
+    // create a function which will return the same instance of the buffer
+    
 }
