@@ -27,7 +27,7 @@ public class PricingModel {
             price = 150;
         } 
         // if available tickets are less than 50 then the price will be 200
-        if (_availableTickets < 50) {
+        if (AvailableTickets.availableTickets1 < 50) {
             price = 185;
         }
         if (numberOfTickets > 25) {
@@ -41,7 +41,7 @@ public class PricingModel {
 
 public class PricingModel1 : PricingModel {
     public PricingModel1(int season) : base(season) {
-        this._availableTickets = 1000;
+        
     }
 }
 
@@ -51,11 +51,24 @@ public class PricingModel1 : PricingModel {
 
 public class PricingModel2 : PricingModel {
     public PricingModel2(int season) : base(season) {
-        this._availableTickets = 1500;
+       
     }
     public override int GetTicketPrice(int numberOfTickets, int season)
     {
-        int price = base.GetTicketPrice(numberOfTickets,season);
+        int price = 0;
+        if (_season == 1 ) { // spring season
+            price = 100; 
+        } else if (_season == 2) { // summer season
+            price = 160;
+        } else if (_season == 3) { // fall season
+            price = 130;
+        } else if (_season == 4) { // winter season
+            price = 160;
+        } 
+        // if available tickets are less than 50 then the price will be 200
+        if (AvailableTickets.availableTickets2 < 50) {
+            price = 200;
+        }
         if (numberOfTickets > 35) {
             price = price - (price * 20 / 100);
         }
@@ -71,7 +84,7 @@ public class PricingModel3:PricingModel {
     //creating price model based on the number of availabe tickets and based on the number of tickets requested along with the season of the year
    
     public PricingModel3( int season):base(season) {
-        this._availableTickets = 2000;
+       
     }
         
     
@@ -89,7 +102,7 @@ public class PricingModel3:PricingModel {
             price = 170;
         } 
         // if available tickets are less than 50 then the price will be 200
-        if (_availableTickets < 50) {
+        if (AvailableTickets.availableTickets3 < 50) {
             price = 200;
         }
         if (numberOfTickets > 45) {
@@ -98,4 +111,15 @@ public class PricingModel3:PricingModel {
         return price;
     }
 
+}
+
+
+
+
+// static management for available tickets for each cruise 
+
+public static class AvailableTickets {
+    public static int availableTickets1 = 1000;
+    public static int availableTickets2 = 1500;
+    public static int availableTickets3 = 2000;
 }

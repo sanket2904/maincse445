@@ -7,7 +7,7 @@ namespace cse445;
 public class Cruise {
     // this class uses the pricing model to determine the price of the cruise tickets and each cruise class will have different pricing model
     protected int t = 0;
-    protected int availableTickets = 10000;
+    
     protected int currentPrice;
     protected int oldPrice = 0;
     // creating a price change event which will be fired when the price of the ticket is less than the current price
@@ -49,6 +49,7 @@ public class Cruise {
             
             if (order != null) {
                 foreach(var bankService in BankServiceList.bankserviceList) {
+                    
                     if (bankService.getCreditCard() == order.getCardNo()) {
                         var processingOrder = new OrderProcessing(this,bankService);
                         Thread thread = new Thread(new ThreadStart(() => processingOrder.Start(order)));
@@ -80,6 +81,8 @@ class Cruise1 : Cruise {
             if (order != null && order.getReceiverId().Equals("1")) {
                 foreach(var bankService in BankServiceList.bankserviceList) {
                     if (bankService.getCreditCard() == order.getCardNo()) {
+                        // reduce the available tickets
+                       
                         var processingOrder = new OrderProcessing(this,bankService);
                         Thread thread = new Thread(new ThreadStart(() => processingOrder.Start(order)));
                         thread.Start();

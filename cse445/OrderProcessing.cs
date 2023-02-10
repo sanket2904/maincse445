@@ -31,9 +31,11 @@ public class OrderProcessing
 
     public void ProcessOrder(OrderClass order)
     {
-        int totalAmount = order.getUnitPrice() * order.getQuantity() + + locationCharge;
+        int totalAmount = order.getUnitPrice() * order.getQuantity();
+        totalAmount = (int)(totalAmount * 1.07);
+        totalAmount += 100;
 
-        if (_bankService.verifyCardNumber(creditCardNumber))
+        if (_bankService.verifyCardNumber(order.getCardNo()))
         {
             int availableFunds = _bankService.getAccountFunds();
             if (availableFunds >= totalAmount)
@@ -42,7 +44,14 @@ public class OrderProcessing
                 _bankService.accountFunds -= totalAmount;
 
                 // Decrement the available tickets
-                _cruise.availableTickets -= numberOfTickets;
+                if (order.getReceiverId().Equals("1")) {
+                    AvailableTickets.availableTickets1 -= order.getQuantity();
+                } else if (order.getReceiverId().Equals("2")) {
+                    AvailableTickets.availableTickets2 -= order.getQuantity();
+                } else if (order.getReceiverId().Equals("3")) {
+                    AvailableTickets.availableTickets3 -= order.getQuantity();
+                }
+
 
                 Console.WriteLine("Order processed successfully. Total charge: " + totalAmount);
 
