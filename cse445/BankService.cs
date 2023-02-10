@@ -27,7 +27,7 @@ public class BankService
             var builder = new StringBuilder();
             while (builder.Length < 16)
             {
-                builder.Append(RNG.Next(10).ToString());
+                builder.Append(RNG.Next(10));
             }
             string newCCstring = builder.ToString();
             newCC = Int32.Parse(newCCstring);

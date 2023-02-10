@@ -6,17 +6,17 @@ namespace cse445;
 
 public class Cruise {
     // this class uses the pricing model to determine the price of the cruise tickets and each cruise class will have different pricing model
-    private int t = 0;
-    public int availableTickets = 10000;
-    private int currentPrice;
-    private int oldPrice = 0;
+    protected int t = 0;
+    protected int availableTickets = 10000;
+    protected int currentPrice;
+    protected int oldPrice = 0;
     // creating a price change event which will be fired when the price of the ticket is less than the current price
     public delegate void PriceCutEventHandler(int price);
     public event PriceCutEventHandler? PriceCut;
 
-    private int season;
+    protected int season;
     protected PricingModel? pricingModel;
-    private MultiCellBuffer _buffer;
+    protected MultiCellBuffer _buffer;
     public Cruise(int season, MultiCellBuffer buffer) {
         this.season = season;
         _buffer = buffer;
@@ -40,7 +40,7 @@ public class Cruise {
         Thread thread = new Thread(Run);
         thread.Start();
     }
-    public void Run() {
+    public virtual void Run() {
         // getting the order frrom the buffer and then firing up new thread for each order to process it
         // this method will run the cruise and will fire up a new thread for each order
         
@@ -73,6 +73,23 @@ class Cruise1 : Cruise {
         this.pricingModel = new PricingModel1(season);
     }
 
+    public override void Run() {
+        while (true) {
+            OrderClass order = _buffer.GetOneCell();
+            
+            if (order != null && order.getReceiverId().Equals("1")) {
+                foreach(var bankService in BankServiceList.bankserviceList) {
+                    if (bankService.getCreditCard() == order.getCardNo()) {
+                        var processingOrder = new OrderProcessing(this,bankService);
+                        Thread thread = new Thread(new ThreadStart(() => processingOrder.Start(order)));
+                        thread.Start();
+                    }
+                }
+                
+            }
+        }
+    }
+
     
 
 }
@@ -83,6 +100,22 @@ class Cruise2 : Cruise {
     public Cruise2(int season, MultiCellBuffer buffer) : base(season, buffer) {
         this.pricingModel = new PricingModel2(season);
     }
+    public override void Run() {
+        while (true) {
+            OrderClass order = _buffer.GetOneCell();
+            
+            if (order != null && order.getReceiverId().Equals("2")) {
+                foreach(var bankService in BankServiceList.bankserviceList) {
+                    if (bankService.getCreditCard() == order.getCardNo()) {
+                        var processingOrder = new OrderProcessing(this,bankService);
+                        Thread thread = new Thread(new ThreadStart(() => processingOrder.Start(order)));
+                        thread.Start();
+                    }
+                }
+                
+            }
+        }
+    }
 }
 
 // cruise3 class extends the cruise class and will have a different pricing model
@@ -90,6 +123,22 @@ class Cruise2 : Cruise {
 class Cruise3 : Cruise {
     public Cruise3(int season, MultiCellBuffer buffer) : base(season, buffer) {
         this.pricingModel = new PricingModel3(season);
+    }
+    public override void Run() {
+        while (true) {
+            OrderClass order = _buffer.GetOneCell();
+            
+            if (order != null && order.getReceiverId().Equals("3")) {
+                foreach(var bankService in BankServiceList.bankserviceList) {
+                    if (bankService.getCreditCard() == order.getCardNo()) {
+                        var processingOrder = new OrderProcessing(this,bankService);
+                        Thread thread = new Thread(new ThreadStart(() => processingOrder.Start(order)));
+                        thread.Start();
+                    }
+                }
+                
+            }
+        }
     }
 }
 
