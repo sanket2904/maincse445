@@ -16,7 +16,7 @@ public class BankService
 
     //generate unique credit card number
     public static Random RNG= new Random();
-    string CreateCreditCardNumber()
+    int CreateCreditCardNumber()
     {
         //do while loop to make sure unique credit card number is generated
         bool check = false;
@@ -27,7 +27,7 @@ public class BankService
             var builder = new StringBuilder();
             while (builder.Length < 16)
             {
-                builder.Append(RNG.Next(10).ToString());
+                builder.Append(RNG.Next(10));
             }
             newCC = builder.ToString();
             //check if newly generated credit card already exist in array
