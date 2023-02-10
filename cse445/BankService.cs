@@ -11,16 +11,16 @@ public class BankService
 {
     public int cardNumber;
     public int accountFunds;
-    string[] creditCardList = new string[0];
+    int[] creditCardList = new int[0];
 
 
     //generate unique credit card number
     public static Random RNG= new Random();
-    string CreateCreditCardNumber()
+    int CreateCreditCardNumber()
     {
         //do while loop to make sure unique credit card number is generated
         bool check = false;
-        string newCC;
+        int newCC;
         do
         {
             //generate new random 16 digit credit card number
@@ -29,13 +29,14 @@ public class BankService
             {
                 builder.Append(RNG.Next(10).ToString());
             }
-            newCC = builder.ToString();
+            string newCCstring = builder.ToString();
+            newCC = Int32.Parse(newCCstring);
             //check if newly generated credit card already exist in array
             check = verifyCardNumber(newCC);
         }while(check);
 
         //add new credit card number into new array of credit cards with size +1
-        string[] newArr = new string[creditCardList.Length + 1];
+        int[] newArr = new int[creditCardList.Length + 1];
         for(int i = 0; i < creditCardList.Length; i++)
         {
             newArr[i] = creditCardList[i]; 
@@ -47,7 +48,7 @@ public class BankService
     }
 
     //Verify if Credit Card number exists
-    public bool verifyCardNumber(string cardNumber)
+    public bool verifyCardNumber(int cardNumber)
     {
 
         // decrypt the credit card number
@@ -55,7 +56,7 @@ public class BankService
 
         for (int i = 0; i < creditCardList.Length; i++)
         {
-            if (creditCardList[i].Equals(cardNumber))
+            if (creditCardList[i] == cardNumber)
                 return true;
         }
         return false;
@@ -94,7 +95,7 @@ public class BankService
     }
 
     //
-    public string purchase(string cardNumber, int cost) 
+    public string purchase(int cardNumber, int cost) 
     {
         // this method will verify the card number using the bank service
         if(verifyCardNumber(cardNumber) && getAccountFunds() >= cost) 
