@@ -25,9 +25,9 @@ public class BankService
         {
             //generate new random 16 digit credit card number
             var builder = new StringBuilder();
-            while (builder.Length < 16)
+            while (builder.Length < 5)
             {
-                builder.Append(RNG.Next(10));
+                builder.Append(RNG.Next(5));
             }
             string newCCstring = builder.ToString();
             Console.WriteLine(newCCstring);
