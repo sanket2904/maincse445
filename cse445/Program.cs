@@ -18,6 +18,18 @@ class Program
         
         var buffer = new MultiCellBuffer();
 
+        var cruise1 = new Cruise(1, buffer);
+        var cruise2 = new Cruise(2, buffer);
+        var cruise3 = new Cruise(3, buffer);
+        var TicketAgent = new TicketAgent(1, buffer, 1000, new List<Cruise> {cruise1, cruise2, cruise3}, b1);
+
+
+        cruise1.Start();
+        cruise2.Start();
+        cruise3.Start();
+        TicketAgent.Start();
+        
+
     }
 }
 

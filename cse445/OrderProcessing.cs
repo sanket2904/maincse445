@@ -16,6 +16,7 @@ public class OrderProcessing
 
     public void Start(OrderClass order)
     {
+        Console.WriteLine("Order processing started");
         Thread thread = new Thread(new ThreadStart(() => Run(order)));
         thread.Start(order);
     }

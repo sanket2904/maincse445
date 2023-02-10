@@ -8,8 +8,8 @@ public class Cruise {
     // this class uses the pricing model to determine the price of the cruise tickets and each cruise class will have different pricing model
     protected int t = 0;
     
-    protected int currentPrice;
-    protected int oldPrice = 0;
+    public int currentPrice;
+    public int oldPrice = 0;
     // creating a price change event which will be fired when the price of the ticket is less than the current price
     public delegate void PriceCutEventHandler(int price);
     public event PriceCutEventHandler? PriceCut;
@@ -44,21 +44,26 @@ public class Cruise {
         // getting the order frrom the buffer and then firing up new thread for each order to process it
         // this method will run the cruise and will fire up a new thread for each order
         
+       
         while (true) {
             OrderClass order = _buffer.GetOneCell();
-            
             if (order != null) {
+               
                 foreach(var bankService in BankServiceList.bankserviceList) {
-                    
+                    Console.WriteLine(bankService.getCreditCard().ToString() + " " + order.getCardNo().ToString());
                     if (bankService.getCreditCard() == order.getCardNo()) {
+                        Console.WriteLine("test fedljewqf");
                         var processingOrder = new OrderProcessing(this,bankService);
-                        Thread thread = new Thread(new ThreadStart(() => processingOrder.Start(order)));
-                        thread.Start();
+                        processingOrder.Start(order);
+                      
                     }
                 }
                 
             }
+            // fetch another order
+            
         }
+        
     }
     // creating a function to process order
     
