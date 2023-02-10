@@ -30,7 +30,7 @@ public class BankService
                 builder.Append(RNG.Next(5));
             }
             string newCCstring = builder.ToString();
-            Console.WriteLine(newCCstring);
+            
             newCC = (int)Int64.Parse(newCCstring);
             //check if newly generated credit card already exist in array
             check = verifyCardNumber(newCC);

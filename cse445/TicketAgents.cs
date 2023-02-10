@@ -35,28 +35,34 @@ public class TicketAgent {
         // get price
 
         var cruise1 = cruiseList[0];
+        var cruise2 = cruiseList[1];
+        var cruise3 = cruiseList[2];
         var order = new OrderClass();
         order.setSenderId("Ticket Agent " + _id);
-        order.setReceiverId("Cruise");
-        order.setCardNo(bankService.CreateCreditCardNumber());
-        order.setUnitPrice(cruise1.currentPrice);
-        order.setQuantity((int)_budget / cruise1.currentPrice);
-
+        order.setReceiverId("1");
+        order.setCardNo(bankService.cardNumber);
+        order.setUnitPrice(PriceTracker1.currentPrice);
+        order.setQuantity((int)_budget / PriceTracker1.currentPrice);
+        
+        
+        
         // put order in buffer
 
         _buffer.SetOneCell(order);
+        
+        
 
-
+        // listen to price cut event
         // this will listen to the price cut event and then will create a new order object and will put it in the buffer
         foreach(var cruise in cruiseList) {
-            cruise.PriceCut += PriceCutHandler; // this will listen to the price cut event from all three cruise classes
+            cruise.PriceCutEvent += PriceCutHandler;
         };
         
-        Console.WriteLine("test ticket agent");
+        
 
     }
 
-    public void PriceCutHandler(int price) {
+    public void PriceCutHandler(Object sender,int price) {
         // this method will be called when the price cut event is fired
         // this method will create a new order object and will put it in the buffer
         Console.WriteLine("Price cut event fired by the cruise ");

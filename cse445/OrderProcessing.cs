@@ -6,25 +6,29 @@ public class OrderProcessing
 {
     private Cruise _cruise;
     private BankService _bankService;
+    private OrderClass _order;
 
-    public OrderProcessing(Cruise cruise, BankService bankService)
+    public OrderProcessing(Cruise cruise, BankService bankService, OrderClass order)
     {
         _cruise = cruise;
+        _order = order;
         _bankService = bankService;
     }
 
 
-    public void Start(OrderClass order)
+    public void Start()
     {
         Console.WriteLine("Order processing started");
-        Thread thread = new Thread(new ThreadStart(() => Run(order)));
-        thread.Start(order);
+        Thread thread = new Thread(new ThreadStart(Run));
+        thread.Start();
+        thread.Join();
+       
     }
 
     // this will be called by the cruise class with all the necessary daya
 
-    public void Run(OrderClass order) {
-        ProcessOrder(order);
+    public void Run() {
+        ProcessOrder(_order);
     }
 
 
@@ -53,7 +57,7 @@ public class OrderProcessing
                     AvailableTickets.availableTickets3 -= order.getQuantity();
                 }
 
-
+                
                 Console.WriteLine("Order processed successfully. Total charge: " + totalAmount);
 
                 // Send confirmation to the ticket agent (implementation not shown)

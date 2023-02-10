@@ -23,21 +23,23 @@ public class MultiCellBuffer {
     }
 
     public void SetOneCell(OrderClass order) {
-        _semaphore.WaitAsync();
-        int cellIndex = -1;
         
-        lock (_buffer) { // lock the buffer cell 
-           
-            for (int i = 0; i < _numberOfCells; i++) {
+        _semaphore.WaitAsync();
+        // Console.WriteLine(_semaphore.CurrentCount);
+        int cellIndex = -1;
+        for (int i = 0; i < _numberOfCells; i++) {
                 if (_buffer[i] == null) {
-                    Console.WriteLine(i);
+                  
                     cellIndex = i;
                     break;
                 }
             }
+        lock (_buffer) { // lock the buffer cell 
            
-            _buffer[cellIndex] = order;
-             Console.WriteLine(_buffer[cellIndex].getSenderId() + " reofb31");
+            
+           
+            if (cellIndex != -1)  _buffer[cellIndex] = order;
+            
         }
         
         
@@ -63,7 +65,7 @@ public class MultiCellBuffer {
             if (cellIndex != -1) _buffer[cellIndex] = null;
            
         }
-        if (cellIndex != -1) Console.WriteLine(cellIndex + " " + _buffer[cellIndex].getSenderId());
+       
         _semaphore.Release();
         if (cellIndex == -1) {
             return null;
