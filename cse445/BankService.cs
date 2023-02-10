@@ -4,11 +4,12 @@ using System.Collections;
 using System.Security.Cryptography;
 using System.Text;
 
+
 namespace cse445;
 
 public class BankService 
 {
-    public string cardNumber;
+    public int cardNumber;
     public int accountFunds;
     string[] creditCardList = new string[0];
 
@@ -48,6 +49,10 @@ public class BankService
     //Verify if Credit Card number exists
     public bool verifyCardNumber(string cardNumber)
     {
+
+        // decrypt the credit card number
+        
+
         for (int i = 0; i < creditCardList.Length; i++)
         {
             if (creditCardList[i].Equals(cardNumber))
@@ -66,7 +71,7 @@ public class BankService
     //
 
     //get credit card number
-    public string getCreditCard()
+    public int getCreditCard()
     {
         return cardNumber;
     }
@@ -102,4 +107,9 @@ public class BankService
     }
     
 
+}
+
+
+public static class BankServiceList {
+    public static List<BankService> bankserviceList = new List<BankService>();
 }

@@ -46,10 +46,16 @@ public class Cruise {
         
         while (true) {
             OrderClass order = _buffer.GetOneCell();
+            
             if (order != null) {
-                var processingOrder = new OrderProcessing(this,);
-                Thread thread = new Thread(new ThreadStart());
-                thread.Start(order);
+                foreach(var bankService in BankServiceList.bankserviceList) {
+                    if (bankService.getCreditCard() == order.getCardNo()) {
+                        var processingOrder = new OrderProcessing(this,bankService);
+                        Thread thread = new Thread(new ThreadStart(() => processingOrder.Start(order)));
+                        thread.Start();
+                    }
+                }
+                
             }
         }
     }
