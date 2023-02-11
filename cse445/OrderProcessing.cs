@@ -8,11 +8,13 @@ public class OrderProcessing
     private BankService _bankService;
     private OrderClass _order;
 
+    private OrderConfirmationBuffer _orderConfirmationBuffer;
     public OrderProcessing(Cruise cruise, BankService bankService, OrderClass order)
     {
         _cruise = cruise;
         _order = order;
         _bankService = bankService;
+       
     }
 
 
@@ -56,7 +58,13 @@ public class OrderProcessing
                 } else if (order.getReceiverId().Equals("3")) {
                     AvailableTickets.availableTickets3 -= order.getQuantity();
                 }
+                string confirmationId = new Guid().ToString();
 
+                // Send order confirmation to the Ticket Agent
+                OrderConfirmation orderConfirmation = new OrderConfirmation(order.getSenderId(),order.getReceiverId(),confirmationId, "Successful", totalAmount );
+                
+                
+                GlobalConfirmationBuffer.buffer.SetOneCell(orderConfirmation);
                 
                 Console.WriteLine("Order processed successfully. Total charge: " + totalAmount);
 
