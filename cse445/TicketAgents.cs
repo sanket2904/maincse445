@@ -33,6 +33,18 @@ public class TicketAgent {
         // make an initial order based on the budget
         // get first cruise
         // get price
+        
+        var req = new PriceRequest();
+
+        GlobalPriceRequestBuffer.buffer.SetOneCell(req);
+
+        // get price before sending the order
+        GlobalPriceRequestBuffer.buffer.RequestEvent += PriceRequestHandler;
+        
+
+
+
+
 
         var cruise1 = cruiseList[0];
         var cruise2 = cruiseList[1];
@@ -84,7 +96,7 @@ public class TicketAgent {
     public void PriceCutHandler(Object sender,int price) {
         // this method will be called when the price cut event is fired
         // this method will create a new order object and will put it in the buffer
-        Console.WriteLine("Price cut event fired by the cruise ");
+        
 
     }
     public void OrderConfirmationHandler(Object sender, OrderConfirmation order) {
@@ -93,6 +105,13 @@ public class TicketAgent {
         if (order == GlobalConfirmationBuffer.buffer.GetOneCell()) {
            
             Console.WriteLine("Confirmation id is " + order.getConfirmationId());
+        }
+    }
+    public void PriceRequestHandler(Object sender, PriceRequest price) {
+        // this method will be called when the price request event is fired
+        // this method will print the price
+        if (price.price != 0) {
+            Console.WriteLine("Price is " + price.price);
         }
     }
     
@@ -144,6 +163,52 @@ public class OrderConfirmation {
 
 // creating an orderConfirmationBuffer for ticket agents
 
+
+// creating a priceRequest class
+
+public class PriceRequest {
+    public int price { get; set; }
+}
+
+
+// price request buffer 
+public class PriceRequestBuffer {
+    private List<PriceRequest> _buffer;
+    private int _size;
+
+    public event EventHandler<PriceRequest> RequestEvent;
+    private SemaphoreSlim _semaphore;
+    public PriceRequestBuffer() {
+        _size = 3;
+        _buffer = new List<PriceRequest>();
+        _semaphore = new SemaphoreSlim(3);
+    }
+
+    public void SetOneCell(PriceRequest price) {
+        _semaphore.WaitAsync();
+        lock(_buffer) {
+            _buffer.Add(price);
+        }
+        RequestEvent?.Invoke(this, price);
+    }
+
+    public PriceRequest GetOneCell() {
+        PriceRequest price;
+        lock(_buffer) {
+            price = _buffer[0];
+            _buffer.RemoveAt(0);
+        }
+        _semaphore.Release();
+        return price;
+    }
+}
+
+
+// static class for price request buffer
+
+public static class GlobalPriceRequestBuffer {
+    public static PriceRequestBuffer buffer = new PriceRequestBuffer();
+}
 
 public class OrderConfirmationBuffer {
     private List<OrderConfirmation> _buffer;

@@ -89,14 +89,20 @@ class Cruise1 : Cruise {
         thread.Start();
         
     }
+    public void PriceRequestEvent(object sender, PriceRequest req) {
+        PriceRequest a =  GlobalPriceRequestBuffer.buffer.GetOneCell();
+        a.price = PriceTracker1.currentPrice;
+        GlobalPriceRequestBuffer.buffer.SetOneCell(a);
+    }
 
     public override void Run() {
         pricingModel = new PricingModel1(season);
+        
         PriceTracker1.currentPrice = pricingModel.GetTicketPrice(1, season); // we will supply the price to the order processing class
         if (PriceTracker1.oldPrice == 0) {
             PriceTracker1.oldPrice = PriceTracker1.currentPrice;
         }
-       
+        GlobalPriceRequestBuffer.buffer.RequestEvent += PriceRequestEvent;
         if (PriceTracker1.currentPrice < PriceTracker1.oldPrice) {
            
             this.PriceCutEvent?.Invoke(this, PriceTracker1.currentPrice);
