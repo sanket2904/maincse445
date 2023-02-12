@@ -65,7 +65,7 @@ public class OrderProcessing
                 
                 GlobalConfirmationBuffer.buffer.SetOneCell(orderConfirmation);
                 
-                Console.WriteLine("Order processed successfully. Total charge: " + totalAmount);
+                // Console.WriteLine("Order processed successfully. Total charge: " + totalAmount);
 
                 // Send confirmation to the ticket agent (implementation not shown)
             }

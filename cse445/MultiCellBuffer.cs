@@ -10,7 +10,7 @@ namespace cse445;
 public class MultiCellBuffer {
     private OrderClass?[] _buffer;
     private int _numberOfCells;
-    private SemaphoreSlim _semaphore;
+    private Semaphore _semaphore;
 
     public event EventHandler<OrderClass> RequestCruise1;
     public event EventHandler<OrderClass> RequestCruise2;
@@ -22,7 +22,7 @@ public class MultiCellBuffer {
     public MultiCellBuffer() {
         _numberOfCells = 3;
         _buffer = new OrderClass[3];
-        _semaphore = new SemaphoreSlim(3);
+        _semaphore = new Semaphore(3,3);
         for(var i = 0; i < _numberOfCells; i++) {
             _buffer[i] = null;
         }
@@ -31,14 +31,15 @@ public class MultiCellBuffer {
     public void SetOneCell(OrderClass order) {
         
         
-        _semaphore.WaitAsync();
+        _semaphore.WaitOne();
         
         if (order != null) {
-           
+        
+
             int cellIndex = -1;
             for (int i = 0; i < _numberOfCells; i++) {
                     if (_buffer[i] == null) {
-                    
+                        _buffer[i] = order;
                         cellIndex = i;
                         break;
                     }
@@ -70,30 +71,27 @@ public class MultiCellBuffer {
     public OrderClass GetOneCell() {
         
         int cellIndex = -1;
-        for (int i = 0; i < _numberOfCells; i++) {
-                if (_buffer[i] != null) {
-                    cellIndex = i;
-                    _semaphore.Release();
-                    OrderClass order = _buffer[cellIndex];
-                    _buffer[cellIndex] = null;
-                    return order;
-                    
-                }
-            }
-           
-        lock (_lock) { // lock the buffer cell
-            
-            
-            if (cellIndex != -1) _buffer[cellIndex] = null;
-           
-        }
-        if (cellIndex == -1) {
-            return null;
-        }
-       
-        _semaphore.Release();
         
-        return _buffer[cellIndex];
+        OrderClass order = null;
+        for (int i = 0; i < 3; i++) {
+            if (_buffer[i] != null) {
+                cellIndex = i;
+               
+                order = _buffer[cellIndex];
+                _buffer[cellIndex] = null;
+                break;
+            }
+        }
+
+        lock (_lock) { // lock the buffer cell
+            if (cellIndex != -1) _buffer[cellIndex] = null;
+        }
+
+        if (order != null) {
+            
+            _semaphore.Release();
+        }
+        return order;
     }
     public bool IsEmpty() {
         for (int i = 0; i < _numberOfCells; i++) {

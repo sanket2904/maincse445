@@ -55,20 +55,14 @@ class Cruise1 : Cruise {
     }
 
     public void OrderReqestHandler(object sender, OrderClass order) {
-        
         OrderClass _order = _buffer.GetOneCell();
         foreach(var bankService in BankServiceList.bankserviceList) {
                     if (bankService.getCreditCard() == order.getCardNo()) {
                         // reduce the available tickets
-                        
                         var processingOrder = new OrderProcessing(this,bankService,order);
                         processingOrder.Start();
-                       
-                        
                     }
                     // manually decrementing the tickets price 
-
-
                 }
                 // decrease the price 
         PriceTracker1.currentPrice = PriceTracker1.currentPrice - 20;
@@ -182,21 +176,19 @@ class Cruise3 : Cruise {
 
     public void OrderReqestHandler(object sender, OrderClass order) {
         OrderClass _order = _buffer.GetOneCell();
-            
-            if (order != null && order.getReceiverId().Equals("3")) {
-               
-                foreach(var bankService in BankServiceList.bankserviceList) {
-                    if (bankService.getCreditCard() == order.getCardNo()) {
-                        var processingOrder = new OrderProcessing(this,bankService,order);
-                        processingOrder.Start();
-                    }
-                }
-                PriceTracker3.currentPrice = PriceTracker3.currentPrice - 20;
-                if (PriceTracker3.currentPrice < PriceTracker3.oldPrice) {
-                    this.PriceCutEvent?.Invoke(this, PriceTracker3.currentPrice);
-                }
-                PriceTracker3.oldPrice = PriceTracker3.currentPrice;
+        foreach(var bankService in BankServiceList.bankserviceList) {
+            if (bankService.getCreditCard() == order.getCardNo()) {
+                var processingOrder = new OrderProcessing(this,bankService,order);
+                processingOrder.Start();
             }
+        }
+        PriceTracker3.currentPrice = PriceTracker3.currentPrice - 20;
+        if (PriceTracker3.currentPrice < PriceTracker3.oldPrice) {
+            Console.WriteLine("Price cut event fired");
+            this.PriceCutEvent?.Invoke(this, PriceTracker3.currentPrice);
+        }
+        PriceTracker3.oldPrice = PriceTracker3.currentPrice;
+            
     }
 
 
@@ -209,9 +201,7 @@ class Cruise3 : Cruise {
             PriceTracker3.oldPrice = PriceTracker3.currentPrice;
         }
        
-        if (PriceTracker3.currentPrice < PriceTracker3.oldPrice) {
-            this.PriceCutEvent?.Invoke(this, PriceTracker3.currentPrice);
-        }
+        
         PriceTracker3.oldPrice = PriceTracker3.currentPrice;
         while(true) {
            

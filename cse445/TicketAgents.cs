@@ -47,7 +47,7 @@ public class TicketAgent {
         // GlobalPriceRequestBuffer.buffer.RequestEventAgent += PriceRequestHandler;
         
 
-
+         GlobalConfirmationBuffer.buffer.AddedEvent += OrderConfirmationHandler;
          var cruise1 = cruiseList[0];
             var cruise2 = cruiseList[1];
             var cruise3 = cruiseList[2];
@@ -88,7 +88,7 @@ public class TicketAgent {
 
         // listen to order confirmation event
         // this will listen to the order confirmation event and will print the confirmation id
-        GlobalConfirmationBuffer.buffer.AddedEvent += OrderConfirmationHandler;
+       
         
         
 
@@ -103,21 +103,15 @@ public class TicketAgent {
     public void OrderConfirmationHandler(Object sender, OrderConfirmation order) {
         // this method will be called when the order confirmation event is fired
         // this method will print the confirmation id
-        if (order == GlobalConfirmationBuffer.buffer.GetOneCell()) {
-           
+        GlobalConfirmationBuffer.buffer.GetOneCell();
+        if (order.getSenderId() == "Ticket Agent " + _id) {
             Console.WriteLine("Confirmation id is " + order.getConfirmationId() + " for " + order.getSenderId());
-            OrderConfirmation ordeeeer = GlobalConfirmationBuffer.buffer.GetOneCell();  
         }
-    }
-    public void PriceRequestHandler(Object sender, PriceRequest price) {
-        // this method will be called when the price request event is fired
-        // this method will print the price
-    
-        if (price.price != 0) {
-            Console.WriteLine("here");
-            Console.WriteLine("Price is " + price.price);
+        
+          
            
-        }
+            
+        
     }
     
 }
@@ -235,51 +229,46 @@ public class OrderConfirmationBuffer {
     }
 
     public void SetOneCell(OrderConfirmation order) {
-        _semaphore.WaitAsync();
-
-        Console.WriteLine("here");
-
+        _semaphore.Wait();
         int cellIndex = -1;
         for (int i = 0; i < 3; i++) {
-                if (_buffer[i] == null) {
-                    cellIndex = i;
-                    break;
-                }
+            if (_buffer[i] == null) {
+                cellIndex = i;
+                _buffer[cellIndex] = order;
+                break;
             }
+        }
         lock (_lock) { // lock the buffer cell 
             if (cellIndex != -1)  _buffer[cellIndex] = order;
+            // check if event is null
+            // Console.WriteLine("Firing Event");
+            AddedEvent?.Invoke(this, order);
+            
         }
-       
-        AddedEvent?.Invoke(this, order);
-
     }
 
     public OrderConfirmation GetOneCell() {
-        int cellIndex = -1;
-        for (int i = 0; i < 3; i++) {
-                if (_buffer[i] != null) {
-                    cellIndex = i;
-                    _semaphore.Release();
-                    OrderConfirmation order = _buffer[cellIndex];
-                    _buffer[cellIndex] = null;
-                    return order;
-                    
-                }
-            }
-           
-        lock (_lock) { // lock the buffer cell
-            
-            
-            if (cellIndex != -1) _buffer[cellIndex] = null;
-           
+    int cellIndex = -1;
+    OrderConfirmation order = null;
+    for (int i = 0; i < 3; i++) {
+        if (_buffer[i] != null) {
+            cellIndex = i;
+            order = _buffer[cellIndex];
+            _buffer[cellIndex] = null;
+            break;
         }
-       
-        _semaphore.Release();
-        if (cellIndex == -1) {
-            return null;
-        }
-        return _buffer[cellIndex];
     }
+
+    lock (_lock) { // lock the buffer cell
+        if (cellIndex != -1) _buffer[cellIndex] = null;
+    }
+
+    if (order != null) {
+        _semaphore.Release();
+    }
+    return order;
+}
+
 }
 
 
