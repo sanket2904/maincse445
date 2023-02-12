@@ -23,46 +23,10 @@ public class Cruise {
     
 
     public virtual void Start() {
-        // this method will start the thread for the cruise
        
-        // pricingModel = new PricingModel1(season);
-        // PriceTracker1.currentPrice = pricingModel.GetTicketPrice(1, season); // we will supply the price to the order processing class
-        // if (PriceTracker1.oldPrice == 0) {
-        //     PriceTracker1.oldPrice = PriceTracker1.currentPrice;
-        // }
-        // Console.WriteLine("Current" + PriceTracker1.currentPrice);
-        // Console.WriteLine("Old" + PriceTracker1.oldPrice);
-        // if (PriceTracker1.currentPrice < PriceTracker1.oldPrice) {
-        //     PriceCut(PriceTracker1.currentPrice);
-            
-        // }
-        // PriceTracker1.oldPrice = PriceTracker1.currentPrice;
-        // Thread thread = new Thread(Run);
-        // thread.Start();
     }
     public virtual void Run() {
-        // getting the order frrom the buffer and then firing up new thread for each order to process it
-        // this method will run the cruise and will fire up a new thread for each order
-        
-       
-        // while (true) {
-        //     OrderClass order = _buffer.GetOneCell();
-        //     if (order != null) {
-               
-        //         foreach(var bankService in BankServiceList.bankserviceList) {
-                   
-        //             if (bankService.getCreditCard() == order.getCardNo()) {
-                       
-        //                 var processingOrder = new OrderProcessing(this,bankService,order);
-        //                 processingOrder.Start(order);
-                      
-        //             }
-        //         }
-                
-        //     }
-        //     // fetch another order
-            
-        // }
+      
         
     }
     // creating a function to process order
@@ -89,20 +53,29 @@ class Cruise1 : Cruise {
         thread.Start();
         
     }
-    public void PriceRequestEvent(object sender, PriceRequest req) {
-        PriceRequest a =  GlobalPriceRequestBuffer.buffer.GetOneCell();
-        a.price = PriceTracker1.currentPrice;
-        GlobalPriceRequestBuffer.buffer.SetOneCell(a);
-    }
+    // public  void PriceRequestEvent(object sender, PriceRequest req) {
+    //     Console.WriteLine(req.price);
+    //     if (req.price == 0) {
+    //         Console.WriteLine("Price Requested for Cruise 1");
+    //         PriceRequest a =   GlobalPriceRequestBuffer.buffer.GetOneCell();
+    //         a.price = PriceTracker1.currentPrice;
+    //         GlobalPriceRequestBuffer.buffer.SetOneCell(a);
+       
+    //     }
+    //     else return;
+    // }
 
     public override void Run() {
+        Console.WriteLine("Cruise 1 started");
         pricingModel = new PricingModel1(season);
         
-        PriceTracker1.currentPrice = pricingModel.GetTicketPrice(1, season); // we will supply the price to the order processing class
+        PriceTracker1.currentPrice = pricingModel.GetTicketPrice(1, season); 
+        Console.WriteLine("Current" + PriceTracker1.currentPrice);
+        // we will supply the price to the order processing class
         if (PriceTracker1.oldPrice == 0) {
             PriceTracker1.oldPrice = PriceTracker1.currentPrice;
         }
-        GlobalPriceRequestBuffer.buffer.RequestEvent += PriceRequestEvent;
+        // GlobalPriceRequestBuffer.buffer.RequestEventCruise += PriceRequestEvent;
         if (PriceTracker1.currentPrice < PriceTracker1.oldPrice) {
            
             this.PriceCutEvent?.Invoke(this, PriceTracker1.currentPrice);
@@ -163,6 +136,7 @@ class Cruise2 : Cruise {
         
     }
     public override void Run() {
+        Console.WriteLine("Cruise 2 started");
         pricingModel = new PricingModel2(season);
         PriceTracker2.currentPrice = pricingModel.GetTicketPrice(1, season); // we will supply the price to the order processing class
         if (PriceTracker2.oldPrice == 0) {
@@ -208,14 +182,14 @@ class Cruise3 : Cruise {
     }
 
     public override void Start() {
-        Console.WriteLine("Cruise 3 started");
+       
         Thread thread = new Thread(Run);
         thread.Start();
         
     }
 
     public override void Run() {
-        
+        Console.WriteLine("Cruise 3 started");
         pricingModel = new PricingModel3(season);
         PriceTracker3.currentPrice = pricingModel.GetTicketPrice(1, season); // we will supply the price to the order processing class
         if (PriceTracker3.oldPrice == 0) {

@@ -32,9 +32,13 @@ class Program
         cruise1.Start();
         cruise2.Start();
         cruise3.Start();
+
         TicketAgent.Start();
         
 
     }
 }
 
+public static class GlobalPriceRequestBuffer {
+    public static PriceRequestBuffer buffer = new PriceRequestBuffer();
+}

@@ -34,48 +34,49 @@ public class TicketAgent {
         // get first cruise
         // get price
         
-        var req = new PriceRequest();
 
-        GlobalPriceRequestBuffer.buffer.SetOneCell(req);
+    
+        // var req = new PriceRequest() {
+        //     price = 0,
+        // };
 
-        // get price before sending the order
-        GlobalPriceRequestBuffer.buffer.RequestEvent += PriceRequestHandler;
+        // GlobalPriceRequestBuffer.buffer.SetOneCell(req);
+
+        // // get price before sending the order
+        // GlobalPriceRequestBuffer.buffer.RequestEventAgent += PriceRequestHandler;
         
 
+        Console.WriteLine("Ticket Agent " + _id + " started");
 
+         var cruise1 = cruiseList[0];
+            var cruise2 = cruiseList[1];
+            var cruise3 = cruiseList[2];
+            var order = new OrderClass();
+            order.setSenderId("Ticket Agent " + _id);
+            order.setReceiverId("1");
+            order.setCardNo(bankService.cardNumber);
+            order.setUnitPrice(PriceTracker1.currentPrice);
+            order.setQuantity((int)_budget / PriceTracker1.currentPrice);
+            var order2 = new OrderClass();
+            order2.setSenderId("Ticket Agent " + _id);
+            order2.setReceiverId("2");
+            order2.setCardNo(bankService.cardNumber);
+            order2.setUnitPrice(PriceTracker2.currentPrice);
+            order2.setQuantity((int)_budget / PriceTracker2.currentPrice);
+            var order3 = new OrderClass();
+            order3.setSenderId("Ticket Agent " + _id);
+            order3.setReceiverId("3");
+            order3.setCardNo(bankService.cardNumber);
+            order3.setUnitPrice(PriceTracker3.currentPrice);
+            order3.setQuantity((int)_budget / PriceTracker3.currentPrice);
+            // put order in buffer
 
+            _buffer.SetOneCell(order);
+            _buffer.SetOneCell(order2);
+            _buffer.SetOneCell(order3);
 
-
-        var cruise1 = cruiseList[0];
-        var cruise2 = cruiseList[1];
-        var cruise3 = cruiseList[2];
-        var order = new OrderClass();
-        order.setSenderId("Ticket Agent " + _id);
-        order.setReceiverId("1");
-        order.setCardNo(bankService.cardNumber);
-        order.setUnitPrice(PriceTracker1.currentPrice);
-        order.setQuantity((int)_budget / PriceTracker1.currentPrice);
-        var order2 = new OrderClass();
-        order2.setSenderId("Ticket Agent " + _id);
-        order2.setReceiverId("2");
-        order2.setCardNo(bankService.cardNumber);
-        order2.setUnitPrice(PriceTracker2.currentPrice);
-        order2.setQuantity((int)_budget / PriceTracker2.currentPrice);
-        var order3 = new OrderClass();
-        order3.setSenderId("Ticket Agent " + _id);
-        order3.setReceiverId("3");
-        order3.setCardNo(bankService.cardNumber);
-        order3.setUnitPrice(PriceTracker3.currentPrice);
-        order3.setQuantity((int)_budget / PriceTracker3.currentPrice);
-
-
-        
-        
-        // put order in buffer
-
-        _buffer.SetOneCell(order);
-        _buffer.SetOneCell(order2);
-        _buffer.SetOneCell(order3);
+       
+       
 
         
 
@@ -97,7 +98,7 @@ public class TicketAgent {
         // this method will be called when the price cut event is fired
         // this method will create a new order object and will put it in the buffer
         
-
+        Console.WriteLine("Price cut event fired" + sender);
     }
     public void OrderConfirmationHandler(Object sender, OrderConfirmation order) {
         // this method will be called when the order confirmation event is fired
@@ -110,8 +111,12 @@ public class TicketAgent {
     public void PriceRequestHandler(Object sender, PriceRequest price) {
         // this method will be called when the price request event is fired
         // this method will print the price
+        Console.WriteLine(sender);
+        Console.WriteLine(price);
         if (price.price != 0) {
+            Console.WriteLine("here");
             Console.WriteLine("Price is " + price.price);
+           
         }
     }
     
@@ -167,7 +172,7 @@ public class OrderConfirmation {
 // creating a priceRequest class
 
 public class PriceRequest {
-    public int price { get; set; }
+    public int price { get; set; } = 0;
 }
 
 
@@ -176,7 +181,8 @@ public class PriceRequestBuffer {
     private List<PriceRequest> _buffer;
     private int _size;
 
-    public event EventHandler<PriceRequest> RequestEvent;
+    public event EventHandler<PriceRequest> RequestEventCruise;
+    public event EventHandler<PriceRequest> RequestEventAgent;
     private SemaphoreSlim _semaphore;
     public PriceRequestBuffer() {
         _size = 3;
@@ -187,9 +193,13 @@ public class PriceRequestBuffer {
     public void SetOneCell(PriceRequest price) {
         _semaphore.WaitAsync();
         lock(_buffer) {
+           
             _buffer.Add(price);
         }
-        RequestEvent?.Invoke(this, price);
+        Console.WriteLine(price.price);
+        if (price.price == 0) RequestEventCruise?.Invoke(this, price);
+        else RequestEventAgent?.Invoke(this, price);
+        
     }
 
     public PriceRequest GetOneCell() {
@@ -206,9 +216,6 @@ public class PriceRequestBuffer {
 
 // static class for price request buffer
 
-public static class GlobalPriceRequestBuffer {
-    public static PriceRequestBuffer buffer = new PriceRequestBuffer();
-}
 
 public class OrderConfirmationBuffer {
     private List<OrderConfirmation> _buffer;
