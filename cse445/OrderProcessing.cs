@@ -20,7 +20,7 @@ public class OrderProcessing
 
     public void Start()
     {
-        Console.WriteLine("Order processing started");
+        
         Thread thread = new Thread(new ThreadStart(Run));
         thread.Start();
         thread.Join();
@@ -58,8 +58,7 @@ public class OrderProcessing
                 } else if (order.getReceiverId().Equals("3")) {
                     AvailableTickets.availableTickets3 -= order.getQuantity();
                 }
-                string confirmationId = new Guid().ToString();
-
+                string confirmationId = TimeBasedId.Generate();
                 // Send order confirmation to the Ticket Agent
                 OrderConfirmation orderConfirmation = new OrderConfirmation(order.getSenderId(),order.getReceiverId(),confirmationId, "Successful", totalAmount );
                 
@@ -75,9 +74,22 @@ public class OrderProcessing
                 Console.WriteLine("Order processing failed. Insufficient funds.");
             }
         }
+
         else
         {
             Console.WriteLine("Order processing failed. Invalid credit card number.");
         }
     }
+}
+
+
+
+
+public class TimeBasedId
+{
+        public static string Generate()
+        {
+            return Convert.ToBase64String(BitConverter.GetBytes(DateTime.Now.Ticks))
+                .Replace("/", "_").Replace("+", "-");
+        }
 }

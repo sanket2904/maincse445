@@ -11,6 +11,12 @@ public class MultiCellBuffer {
     private OrderClass?[] _buffer;
     private int _numberOfCells;
     private SemaphoreSlim _semaphore;
+
+    public event EventHandler<OrderClass> RequestCruise1;
+    public event EventHandler<OrderClass> RequestCruise2;
+    public event EventHandler<OrderClass> RequestCruise3;
+
+    private readonly object _lock = new object();
     // private object[] _locks;
 
     public MultiCellBuffer() {
@@ -24,22 +30,38 @@ public class MultiCellBuffer {
 
     public void SetOneCell(OrderClass order) {
         
+        
         _semaphore.WaitAsync();
-        // Console.WriteLine(_semaphore.CurrentCount);
-        int cellIndex = -1;
-        for (int i = 0; i < _numberOfCells; i++) {
-                if (_buffer[i] == null) {
-                  
-                    cellIndex = i;
-                    break;
-                }
+        
+        if (order != null) {
+           
+            int cellIndex = -1;
+            for (int i = 0; i < _numberOfCells; i++) {
+                    if (_buffer[i] == null) {
+                    
+                        cellIndex = i;
+                        break;
+                    }
             }
-        lock (_buffer) { // lock the buffer cell 
-           
+             if (order.getReceiverId().Equals("1")) {
+                   
+                    RequestCruise1?.Invoke(this, order);
+                }
+                else if (order.getReceiverId().Equals("2")) {
+                    
+                    RequestCruise2?.Invoke(this, order);
+                }
+                else if (order.getReceiverId().Equals("3")) {
+                    
+                    RequestCruise3?.Invoke(this, order);
+                }
+            lock (_lock) { // lock the buffer cell 
             
-           
-            if (cellIndex != -1)  _buffer[cellIndex] = order;
-            
+               
+                if (cellIndex != -1)  _buffer[cellIndex] = order;
+                
+            }
+        
         }
         
         
@@ -59,18 +81,27 @@ public class MultiCellBuffer {
                 }
             }
            
-        lock (_buffer) { // lock the buffer cell
+        lock (_lock) { // lock the buffer cell
             
             
             if (cellIndex != -1) _buffer[cellIndex] = null;
            
         }
-       
-        _semaphore.Release();
         if (cellIndex == -1) {
             return null;
         }
+       
+        _semaphore.Release();
+        
         return _buffer[cellIndex];
+    }
+    public bool IsEmpty() {
+        for (int i = 0; i < _numberOfCells; i++) {
+            if (_buffer[i] != null) {
+                return false;
+            }
+        }
+        return true;
     }
     // create a function which will return the same instance of the buffer
     

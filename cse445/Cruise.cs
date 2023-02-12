@@ -43,7 +43,7 @@ class Cruise1 : Cruise {
     public Cruise1(int season, MultiCellBuffer buffer) : base(season, buffer) {
         // create a random number generator from 1 to 4 to determine the season
 
-        int seasonNumber = new Random().Next(1, 4);
+        int seasonNumber = 1;
         this.pricingModel = new PricingModel1(seasonNumber);
     }
     public override void Start()
@@ -53,40 +53,11 @@ class Cruise1 : Cruise {
         thread.Start();
         
     }
-    // public  void PriceRequestEvent(object sender, PriceRequest req) {
-    //     Console.WriteLine(req.price);
-    //     if (req.price == 0) {
-    //         Console.WriteLine("Price Requested for Cruise 1");
-    //         PriceRequest a =   GlobalPriceRequestBuffer.buffer.GetOneCell();
-    //         a.price = PriceTracker1.currentPrice;
-    //         GlobalPriceRequestBuffer.buffer.SetOneCell(a);
-       
-    //     }
-    //     else return;
-    // }
 
-    public override void Run() {
-        Console.WriteLine("Cruise 1 started");
-        pricingModel = new PricingModel1(season);
+    public void OrderReqestHandler(object sender, OrderClass order) {
         
-        PriceTracker1.currentPrice = pricingModel.GetTicketPrice(1, season); 
-        Console.WriteLine("Current" + PriceTracker1.currentPrice);
-        // we will supply the price to the order processing class
-        if (PriceTracker1.oldPrice == 0) {
-            PriceTracker1.oldPrice = PriceTracker1.currentPrice;
-        }
-        // GlobalPriceRequestBuffer.buffer.RequestEventCruise += PriceRequestEvent;
-        if (PriceTracker1.currentPrice < PriceTracker1.oldPrice) {
-           
-            this.PriceCutEvent?.Invoke(this, PriceTracker1.currentPrice);
-            
-        }
-        PriceTracker1.oldPrice = PriceTracker1.currentPrice;
-        while (true && (AvailableTickets.availableTickets1 > 15)) {
-            OrderClass order = _buffer.GetOneCell();
-            
-            if (order != null && order.getReceiverId().Equals("1")) {
-                foreach(var bankService in BankServiceList.bankserviceList) {
+        OrderClass _order = _buffer.GetOneCell();
+        foreach(var bankService in BankServiceList.bankserviceList) {
                     if (bankService.getCreditCard() == order.getCardNo()) {
                         // reduce the available tickets
                         
@@ -100,20 +71,35 @@ class Cruise1 : Cruise {
 
                 }
                 // decrease the price 
-                PriceTracker1.currentPrice = PriceTracker1.currentPrice - 20;
-                if (PriceTracker1.currentPrice < PriceTracker1.oldPrice) {
-                    this.PriceCutEvent?.Invoke(this, PriceTracker1.currentPrice);
-                }
-                PriceTracker1.oldPrice = PriceTracker1.currentPrice;
-
-                
-               
-            }
-            else {
-                // put the order back in the buffer
-                _buffer.SetOneCell(order);
-            }
+        PriceTracker1.currentPrice = PriceTracker1.currentPrice - 20;
+        if (PriceTracker1.currentPrice < PriceTracker1.oldPrice) {
+            this.PriceCutEvent?.Invoke(this, PriceTracker1.currentPrice);
         }
+        PriceTracker1.oldPrice = PriceTracker1.currentPrice;
+    }
+    
+
+    public override void Run() {
+        
+        pricingModel = new PricingModel1(season);
+        _buffer.RequestCruise1 += OrderReqestHandler;
+        PriceTracker1.currentPrice = pricingModel.GetTicketPrice(1, season); 
+       
+        // we will supply the price to the order processing class
+        if (PriceTracker1.oldPrice == 0) {
+            PriceTracker1.oldPrice = PriceTracker1.currentPrice;
+        }
+        // GlobalPriceRequestBuffer.buffer.RequestEventCruise += PriceRequestEvent;
+        if (PriceTracker1.currentPrice < PriceTracker1.oldPrice) {
+           
+            this.PriceCutEvent?.Invoke(this, PriceTracker1.currentPrice);
+            
+        }
+        PriceTracker1.oldPrice = PriceTracker1.currentPrice;
+        while(true) {
+           
+        }
+        
     }
 
     
@@ -125,7 +111,7 @@ class Cruise1 : Cruise {
 class Cruise2 : Cruise {
     public override event EventHandler<int> PriceCutEvent;
     public Cruise2(int season, MultiCellBuffer buffer) : base(season, buffer) {
-        int seasonNumber = new Random().Next(1, 4);
+        int seasonNumber = 1;
         this.pricingModel = new PricingModel2(seasonNumber);
     }
 
@@ -135,8 +121,31 @@ class Cruise2 : Cruise {
         thread.Start();
         
     }
+    public void OrderReqestHandler(object sender, OrderClass order) {
+        OrderClass _order = _buffer.GetOneCell();
+        foreach(var bankService in BankServiceList.bankserviceList) {
+                    if (bankService.getCreditCard() == order.getCardNo()) {
+                        // reduce the available tickets
+                        
+                        var processingOrder = new OrderProcessing(this,bankService,order);
+                        processingOrder.Start();
+                       
+                        
+                    }
+                    // manually decrementing the tickets price 
+
+
+                }
+                // decrease the price 
+        PriceTracker2.currentPrice = PriceTracker2.currentPrice - 20;
+        if (PriceTracker2.currentPrice < PriceTracker2.oldPrice) {
+            this.PriceCutEvent?.Invoke(this, PriceTracker2.currentPrice);
+        }
+        PriceTracker2.oldPrice = PriceTracker2.currentPrice;
+    }
     public override void Run() {
-        Console.WriteLine("Cruise 2 started");
+        
+        _buffer.RequestCruise2  += OrderReqestHandler;
         pricingModel = new PricingModel2(season);
         PriceTracker2.currentPrice = pricingModel.GetTicketPrice(1, season); // we will supply the price to the order processing class
         if (PriceTracker2.oldPrice == 0) {
@@ -147,28 +156,11 @@ class Cruise2 : Cruise {
             this.PriceCutEvent?.Invoke(this, PriceTracker2.currentPrice);
         }
         PriceTracker2.oldPrice = PriceTracker2.currentPrice;
-        while (true && (AvailableTickets.availableTickets2 > 15)) {
-            OrderClass order = _buffer.GetOneCell();
+
+        while(true) {
             
-            if (order != null && order.getReceiverId().Equals("2")) {
-                foreach(var bankService in BankServiceList.bankserviceList) {
-                    if (bankService.getCreditCard() == order.getCardNo()) {
-                     
-                        var processingOrder = new OrderProcessing(this,bankService,order);
-                        processingOrder.Start();
-                    }
-                }
-                PriceTracker2.currentPrice = PriceTracker2.currentPrice - 20;
-                if (PriceTracker2.currentPrice < PriceTracker2.oldPrice) {
-                    this.PriceCutEvent?.Invoke(this, PriceTracker2.currentPrice);
-                }
-                PriceTracker2.oldPrice = PriceTracker2.currentPrice;
-            }
-            else {
-                // put the order back in the buffer
-                _buffer.SetOneCell(order);
-            }
         }
+       
     }
 }
 
@@ -177,7 +169,7 @@ class Cruise2 : Cruise {
 class Cruise3 : Cruise {
     public override event EventHandler<int> PriceCutEvent;
     public Cruise3(int season, MultiCellBuffer buffer) : base(season, buffer) {
-        int seasonNumber = new Random().Next(1, 4);
+        int seasonNumber = 1;
         this.pricingModel = new PricingModel3(seasonNumber);
     }
 
@@ -188,22 +180,11 @@ class Cruise3 : Cruise {
         
     }
 
-    public override void Run() {
-        Console.WriteLine("Cruise 3 started");
-        pricingModel = new PricingModel3(season);
-        PriceTracker3.currentPrice = pricingModel.GetTicketPrice(1, season); // we will supply the price to the order processing class
-        if (PriceTracker3.oldPrice == 0) {
-            PriceTracker3.oldPrice = PriceTracker3.currentPrice;
-        }
-       
-        if (PriceTracker3.currentPrice < PriceTracker3.oldPrice) {
-            this.PriceCutEvent?.Invoke(this, PriceTracker3.currentPrice);
-        }
-        PriceTracker3.oldPrice = PriceTracker3.currentPrice;
-        while (true && (AvailableTickets.availableTickets3 > 15)) {
-            OrderClass order = _buffer.GetOneCell();
+    public void OrderReqestHandler(object sender, OrderClass order) {
+        OrderClass _order = _buffer.GetOneCell();
             
             if (order != null && order.getReceiverId().Equals("3")) {
+               
                 foreach(var bankService in BankServiceList.bankserviceList) {
                     if (bankService.getCreditCard() == order.getCardNo()) {
                         var processingOrder = new OrderProcessing(this,bankService,order);
@@ -216,11 +197,26 @@ class Cruise3 : Cruise {
                 }
                 PriceTracker3.oldPrice = PriceTracker3.currentPrice;
             }
-            else {
-                // put the order back in the buffer
-                _buffer.SetOneCell(order);
-            }
+    }
+
+
+    public override void Run() {
+        
+        _buffer.RequestCruise3  += OrderReqestHandler;
+        pricingModel = new PricingModel3(season);
+        PriceTracker3.currentPrice = pricingModel.GetTicketPrice(1, season); // we will supply the price to the order processing class
+        if (PriceTracker3.oldPrice == 0) {
+            PriceTracker3.oldPrice = PriceTracker3.currentPrice;
         }
+       
+        if (PriceTracker3.currentPrice < PriceTracker3.oldPrice) {
+            this.PriceCutEvent?.Invoke(this, PriceTracker3.currentPrice);
+        }
+        PriceTracker3.oldPrice = PriceTracker3.currentPrice;
+        while(true) {
+           
+        }
+        
     }
 }
 
