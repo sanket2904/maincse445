@@ -34,6 +34,11 @@ class Program
         cruise3.Start();
 
         TicketAgent.Start();
+        TicketAgent2.Start();
+        TicketAgent3.Start();
+        TicketAgent4.Start();
+        TicketAgent5.Start();
+        
         
 
     }
