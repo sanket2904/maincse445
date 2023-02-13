@@ -7,7 +7,7 @@ public class OrderProcessing
     private Cruise _cruise;
     private BankService _bankService;
     private OrderClass _order;
-
+    private readonly object _lock = new Object();
     private OrderConfirmationBuffer _orderConfirmationBuffer;
     public OrderProcessing(Cruise cruise, BankService bankService, OrderClass order)
     {
@@ -51,14 +51,18 @@ public class OrderProcessing
                 _bankService.accountFunds -= totalAmount;
 
                 // Decrement the available tickets
-                if (order.getReceiverId().Equals("1")) {
-                    AvailableTickets.availableTickets1 -= order.getQuantity();
-                } else if (order.getReceiverId().Equals("2")) {
-                    AvailableTickets.availableTickets2 -= order.getQuantity();
-                } else if (order.getReceiverId().Equals("3")) {
-                    AvailableTickets.availableTickets3 -= order.getQuantity();
+
+                lock (_lock)
+                {
+                    if (order.getReceiverId().Equals("1")) {
+                        AvailableTickets.availableTickets1 -= order.getQuantity();
+                    } else if (order.getReceiverId().Equals("2")) {
+                        AvailableTickets.availableTickets2 -= order.getQuantity();
+                    } else if (order.getReceiverId().Equals("3")) {
+                        AvailableTickets.availableTickets3 -= order.getQuantity();
+                    }
                 }
-                string confirmationId = TimeBasedId.Generate();
+                string confirmationId = Guid.NewGuid().ToString();
                 // Send order confirmation to the Ticket Agent
                 OrderConfirmation orderConfirmation = new OrderConfirmation(order.getSenderId(),order.getReceiverId(),confirmationId, "Successful", totalAmount );
                 

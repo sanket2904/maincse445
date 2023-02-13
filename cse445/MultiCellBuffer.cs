@@ -69,26 +69,20 @@ public class MultiCellBuffer {
     }
 
     public OrderClass GetOneCell() {
-        
         int cellIndex = -1;
-        
         OrderClass order = null;
         for (int i = 0; i < 3; i++) {
             if (_buffer[i] != null) {
                 cellIndex = i;
-               
                 order = _buffer[cellIndex];
                 _buffer[cellIndex] = null;
                 break;
             }
         }
-
         lock (_lock) { // lock the buffer cell
             if (cellIndex != -1) _buffer[cellIndex] = null;
         }
-
-        if (order != null) {
-            
+        if (order != null) {   
             _semaphore.Release();
         }
         return order;

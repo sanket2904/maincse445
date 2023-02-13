@@ -119,7 +119,7 @@ public class PricingModel3:PricingModel {
 // static management for available tickets for each cruise 
 
 public static class AvailableTickets {
-    public static int availableTickets1 = 1000;
-    public static int availableTickets2 = 1500;
-    public static int availableTickets3 = 2000;
+    public static int availableTickets1 = 200;
+    public static int availableTickets2 = 200;
+    public static int availableTickets3 = 200;
 }

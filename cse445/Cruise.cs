@@ -67,7 +67,7 @@ class Cruise1 : Cruise {
                 // decrease the price 
         PriceTracker1.currentPrice = PriceTracker1.currentPrice - 20;
         if (PriceTracker1.currentPrice < PriceTracker1.oldPrice) {
-            this.PriceCutEvent?.Invoke(this, PriceTracker1.currentPrice);
+            this.PriceCutEvent?.Invoke("1", PriceTracker1.currentPrice);
         }
         PriceTracker1.oldPrice = PriceTracker1.currentPrice;
     }
@@ -86,11 +86,11 @@ class Cruise1 : Cruise {
         // GlobalPriceRequestBuffer.buffer.RequestEventCruise += PriceRequestEvent;
         if (PriceTracker1.currentPrice < PriceTracker1.oldPrice) {
            
-            this.PriceCutEvent?.Invoke(this, PriceTracker1.currentPrice);
+            this.PriceCutEvent?.Invoke("1", PriceTracker1.currentPrice);
             
         }
         PriceTracker1.oldPrice = PriceTracker1.currentPrice;
-        while(true) {
+        while( AvailableTickets.availableTickets1 > 0) {
            
         }
         
@@ -133,7 +133,7 @@ class Cruise2 : Cruise {
                 // decrease the price 
         PriceTracker2.currentPrice = PriceTracker2.currentPrice - 20;
         if (PriceTracker2.currentPrice < PriceTracker2.oldPrice) {
-            this.PriceCutEvent?.Invoke(this, PriceTracker2.currentPrice);
+            this.PriceCutEvent?.Invoke("2", PriceTracker2.currentPrice);
         }
         PriceTracker2.oldPrice = PriceTracker2.currentPrice;
     }
@@ -147,11 +147,11 @@ class Cruise2 : Cruise {
         }
        
         if (PriceTracker2.currentPrice < PriceTracker2.oldPrice) {
-            this.PriceCutEvent?.Invoke(this, PriceTracker2.currentPrice);
+            this.PriceCutEvent?.Invoke("2", PriceTracker2.currentPrice);
         }
         PriceTracker2.oldPrice = PriceTracker2.currentPrice;
 
-        while(true) {
+        while( AvailableTickets.availableTickets2 > 0){
             
         }
        
@@ -162,6 +162,8 @@ class Cruise2 : Cruise {
 
 class Cruise3 : Cruise {
     public override event EventHandler<int> PriceCutEvent;
+    // lock for event
+    private readonly object _lock = new object();
     public Cruise3(int season, MultiCellBuffer buffer) : base(season, buffer) {
         int seasonNumber = 1;
         this.pricingModel = new PricingModel3(seasonNumber);
@@ -182,10 +184,14 @@ class Cruise3 : Cruise {
                 processingOrder.Start();
             }
         }
+
         PriceTracker3.currentPrice = PriceTracker3.currentPrice - 20;
         if (PriceTracker3.currentPrice < PriceTracker3.oldPrice) {
-            Console.WriteLine("Price cut event fired");
-            this.PriceCutEvent?.Invoke(this, PriceTracker3.currentPrice);
+            
+            lock(_lock) {
+                this.PriceCutEvent?.Invoke("3", PriceTracker3.currentPrice);
+            }
+        
         }
         PriceTracker3.oldPrice = PriceTracker3.currentPrice;
             
@@ -203,7 +209,7 @@ class Cruise3 : Cruise {
        
         
         PriceTracker3.oldPrice = PriceTracker3.currentPrice;
-        while(true) {
+        while( AvailableTickets.availableTickets3 > 0) {
            
         }
         
