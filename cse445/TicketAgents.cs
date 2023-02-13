@@ -5,7 +5,7 @@ namespace cse445;
 public class TicketAgent {
     // Each ticket agent is a thread created by a different object instantiated from the same class
     private int _id;
-
+    private int counter = 0;
     // each ticket agent will have a budget and will be able to buy tickets for the cruise
     private int _budget;
     private MultiCellBuffer _buffer;
@@ -60,14 +60,18 @@ public class TicketAgent {
     }
 
     public void PriceCutHandler(Object sender,int price) {
-        // var order = new OrderClass();
-        // order.setSenderId("Ticket Agent " + _id);
-        // order.setReceiverId(""+sender);
-        // order.setCardNo(bankService.cardNumber);
-        // order.setUnitPrice(price);
-        // order.setQuantity((int)_budget / price);
-        // _buffer.SetOneCell(order);
-        // Console.WriteLine("Price cut event fired for " + sender);        
+        if (counter == 0) {
+            Console.WriteLine("Price cut event fired for Cruise");
+            counter = 1;
+            var order = new OrderClass();
+            order.setSenderId("Ticket Agent " + _id);
+            order.setReceiverId(""+sender);
+            order.setCardNo(bankService.cardNumber);
+            order.setUnitPrice(price);
+            order.setQuantity((int)_budget / price);
+            _buffer.SetOneCell(order);
+            
+        }
     }
     public void OrderConfirmationHandler(Object sender, OrderConfirmation order) {
         // this method will be called when the order confirmation event is fired

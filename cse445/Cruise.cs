@@ -65,8 +65,8 @@ class Cruise1 : Cruise {
                     // manually decrementing the tickets price 
                 }
                 // decrease the price 
-        PriceTracker1.currentPrice = PriceTracker1.currentPrice - 20;
-        if (PriceTracker1.currentPrice < PriceTracker1.oldPrice) {
+        PriceTracker1.currentPrice = PriceTracker1.currentPrice - 5;
+        if (PriceTracker1.currentPrice < PriceTracker1.oldPrice && PriceTracker1.currentPrice > 0) {
             this.PriceCutEvent?.Invoke("1", PriceTracker1.currentPrice);
         }
         PriceTracker1.oldPrice = PriceTracker1.currentPrice;
@@ -132,7 +132,7 @@ class Cruise2 : Cruise {
                 }
                 // decrease the price 
         PriceTracker2.currentPrice = PriceTracker2.currentPrice - 20;
-        if (PriceTracker2.currentPrice < PriceTracker2.oldPrice) {
+        if (PriceTracker2.currentPrice < PriceTracker2.oldPrice && PriceTracker2.currentPrice > 0) {
             this.PriceCutEvent?.Invoke("2", PriceTracker2.currentPrice);
         }
         PriceTracker2.oldPrice = PriceTracker2.currentPrice;
@@ -146,7 +146,7 @@ class Cruise2 : Cruise {
             PriceTracker2.oldPrice = PriceTracker2.currentPrice;
         }
        
-        if (PriceTracker2.currentPrice < PriceTracker2.oldPrice) {
+        if (PriceTracker2.currentPrice < PriceTracker2.oldPrice ) {
             this.PriceCutEvent?.Invoke("2", PriceTracker2.currentPrice);
         }
         PriceTracker2.oldPrice = PriceTracker2.currentPrice;
@@ -186,7 +186,7 @@ class Cruise3 : Cruise {
         }
 
         PriceTracker3.currentPrice = PriceTracker3.currentPrice - 20;
-        if (PriceTracker3.currentPrice < PriceTracker3.oldPrice) {
+        if (PriceTracker3.currentPrice < PriceTracker3.oldPrice && PriceTracker3.currentPrice > 0) {
             
             lock(_lock) {
                 this.PriceCutEvent?.Invoke("3", PriceTracker3.currentPrice);
